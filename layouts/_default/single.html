@@ -1,0 +1,32 @@
+{{ define "main" }}
+<article class="kin-article">
+    <header class="kin-header">
+        <h1>{{ .Title }}</h1>
+        <div class="kin-meta">
+            <span class="kin-number">Kin {{ .Params.kin_number }}</span>
+            <span class="kin-name">{{ .Params.kin_name }}</span>
+            <span class="kin-date">{{ .Date.Format "2006年1月2日" }}</span>
+        </div>
+        <div class="kin-tags">
+            {{ range .Params.tags }}
+            <span class="tag">{{ . }}</span>
+            {{ end }}
+        </div>
+    </header>
+
+    <div class="kin-content">
+        {{ .Content }}
+    </div>
+
+    <footer class="kin-footer">
+        <div class="kin-navigation">
+            {{ with .PrevInSection }}
+            <a href="{{ .RelPermalink }}" class="prev-kin">← 上一个: Kin {{ .Params.kin_number }}</a>
+            {{ end }}
+            {{ with .NextInSection }}
+            <a href="{{ .RelPermalink }}" class="next-kin">下一个: Kin {{ .Params.kin_number }} →</a>
+            {{ end }}
+        </div>
+    </footer>
+</article>
+{{ end }}

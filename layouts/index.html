@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Site.Title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            outline: none;
+        }
+        
+        .kin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .kin-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .kin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .kin-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .kin-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .kin-energy {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .categories {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .categories h2 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
+        .category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .category-tag {
+            background: #f0f4ff;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #667eea;
+            transition: background 0.3s ease;
+        }
+        
+        .category-tag:hover {
+            background: #e0e7ff;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 2rem 0;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .kin-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>玛雅历法 Kin 解读指南</h1>
+            <p>探索 260 个独特的玛雅历法 Kin 能量，发现你的灵魂使命</p>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="搜索 Kin 编号、名称或能量..." id="searchInput">
+        </div>
+        
+        <div class="categories">
+            <h2>快速导航</h2>
+            <div class="category-list">
+                <a href="#kin-1-20" class="category-tag">Kin 1-20</a>
+                <a href="#kin-21-40" class="category-tag">Kin 21-40</a>
+                <a href="#kin-41-60" class="category-tag">Kin 41-60</a>
+                <a href="#kin-61-80" class="category-tag">Kin 61-80</a>
+                <a href="#kin-81-100" class="category-tag">Kin 81-100</a>
+                <a href="#kin-101-120" class="category-tag">Kin 101-120</a>
+                <a href="#kin-121-140" class="category-tag">Kin 121-140</a>
+                <a href="#kin-141-160" class="category-tag">Kin 141-160</a>
+                <a href="#kin-161-180" class="category-tag">Kin 161-180</a>
+                <a href="#kin-181-200" class="category-tag">Kin 181-200</a>
+                <a href="#kin-201-220" class="category-tag">Kin 201-220</a>
+                <a href="#kin-221-240" class="category-tag">Kin 221-240</a>
+                <a href="#kin-241-260" class="category-tag">Kin 241-260</a>
+            </div>
+        </div>
+        
+        <div class="kin-grid" id="kinGrid">
+            <!-- Kin 卡片将通过 JavaScript 动态生成 -->
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 玛雅历法 Kin 解读指南 | 数据基于传统玛雅历法智慧</p>
+            <p>仅供学习和灵性成长参考</p>
+        </div>
+    </div>
+    
+    <script>
+        // 简单的搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const kinGrid = document.getElementById('kinGrid');
+        
+        // 生成 Kin 卡片
+        function generateKinCards() {
+            let html = '';
+            for (let i = 1; i <= 260; i++) {
+                // 这里可以添加从数据中获取的实际 Kin 名称
+                // 暂时使用占位符
+                const kinNames = [
+                    "磁性红龙", "月亮白风", "电力蓝夜", "自我存在黄种子", "超频红蛇",
+                    "韵律白世界桥", "共振蓝手", "银河黄星星", "太阳红月", "行星白狗"
+                ];
+                const nameIndex = (i - 1) % 10;
+                
+                html += `
+                    <a href="kins/kin-${i}" class="kin-card">
+                        <div class="kin-number">Kin ${i}</div>
+                        <div class="kin-name">${kinNames[nameIndex]}</div>
+                        <div class="kin-energy">探索能量解读</div>
+                    </a>
+                `;
+            }
+            kinGrid.innerHTML = html;
+        }
+        
+        // 搜索功能
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.kin-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // 初始化
+        generateKinCards();
+    </script>
+</body>
+</html>

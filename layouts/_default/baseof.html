@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "zh-cn" }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+    {{ block "head" . }}{{ end }}
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="{{ .Site.BaseURL }}">首页</a></li>
+                <li><a href="{{ "kins" | relURL }}">所有 Kin</a></li>
+                <li><a href="{{ "categories" | relURL }}">分类</a></li>
+                <li><a href="{{ "tags" | relURL }}">标签</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" placeholder="搜索 Kin..." id="searchInput">
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+
+    <footer>
+        <p>&copy; {{ now.Format "2006" }} {{ .Site.Title }}. 基于传统玛雅历法智慧。</p>
+        <p>仅供学习和灵性成长参考。</p>
+    </footer>
+
+    <script src="{{ "js/search.js" | relURL }}"></script>
+    {{ block "scripts" . }}{{ end }}
+</body>
+</html>
