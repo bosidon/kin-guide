@@ -1,11 +1,11 @@
-baseURL = 'https://yourusername.github.io/kin-guide/'
+baseURL = 'https://bosidon.github.io/kin-guide/'
 languageCode = 'zh-cn'
 title = '玛雅历法 Kin 解读指南'
 
 [params]
   description = '260个玛雅历法Kin的详细解读，包含调性、印记、能量关系、灵性实践等'
   author = 'Kin Guide'
-  githubURL = 'https://github.com/yourusername/kin-guide'
+  githubURL = 'https://github.com/bosidon/kin-guide'
   
 [taxonomies]
   category = 'categories'
