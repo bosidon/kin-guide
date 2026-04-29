@@ -1,170 +1,185 @@
 {{ define "main" }}
-<article class="kin-article">
+<article class="kin-article" id="kinAppRoot">
     <header class="kin-header">
-        <h1>{{ .Title }}</h1>
+        <h1 id="kinTitle">玛雅天赋解读</h1>
         <div class="kin-meta">
-            <span class="kin-number">Kin {{ .Params.kin_number }}</span>
-            <span class="kin-name">{{ .Params.kin_name }}</span>
-            <span class="kin-date">{{ .Date.Format "2006年1月2日" }}</span>
+            <span class="kin-number" id="kinNumberDisplay">—</span>
         </div>
-        <div class="kin-tags">
-            {{ range .Params.tags }}
-            <span class="tag">{{ . }}</span>
-            {{ end }}
+        <div class="kin-search-bar" style="margin-top:1.2rem">
+            <input type="number" id="kinInput" min="1" max="260" placeholder="输入Kin编号 (1-260)..." style="padding:8px 16px;font-size:1rem;border:2px solid #e0e7ff;border-radius:8px;width:200px;outline:none;">
+            <button id="kinGoBtn" style="padding:8px 20px;font-size:1rem;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:8px;cursor:pointer;margin-left:8px;">查询</button>
+            <span style="margin-left:12px;color:#999;font-size:0.85rem">或</span>
+            <a href="{{ .Site.BaseURL }}" style="margin-left:8px;color:#667eea;font-size:0.9rem">首页输入生日查询 →</a>
         </div>
     </header>
 
-    <div class="kin-content">
-        <!-- 动态五大力量解读区域 -->
-        <div id="fivePowersSection" class="five-powers-section">
-            <div class="five-powers-loading" id="fivePowersLoading">加载五大力量解读中...</div>
+    <div id="kinContent">
+        <div class="five-powers-section">
+            <div class="five-powers-loading" id="fivePowersLoading">加载玛雅天赋计算引擎...</div>
         </div>
-
-        {{ .Content }}
     </div>
-
-    <footer class="kin-footer">
-        <div class="kin-navigation">
-            {{ with .PrevInSection }}
-            <a href="{{ .RelPermalink }}" class="prev-kin">← 上一个: Kin {{ .Params.kin_number }}</a>
-            {{ end }}
-            {{ with .NextInSection }}
-            <a href="{{ .RelPermalink }}" class="next-kin">下一个: Kin {{ .Params.kin_number }} →</a>
-            {{ end }}
-        </div>
-    </footer>
 </article>
 
 <script src="{{ "js/maya_calculator.js" | relURL }}"></script>
 <script src="{{ "js/kin-interpretations.js" | relURL }}"></script>
 <script>
 (function() {
-    // 从页面提取当前 Kin 编号
-    function getKinNumber() {
-        var meta = document.querySelector('.kin-number');
-        if (!meta) return null;
-        var m = meta.textContent.match(/Kin\s*(\d+)/i);
-        return m ? parseInt(m[1]) : null;
-    }
+    var KIN_COLORS = ['#D32F2F','#ECEFF1','#1976D2','#FBC02D','#C62828','#B0BEC5','#1565C0','#F9A825','#E53935','#CFD8DC','#1E88E5','#FDD835','#EF5350','#90A4AE','#42A5F5','#FFEE58','#FF7043','#BDBDBD','#29B6F6','#FFD600'];
+    var MISSING_IMAGES = ['红龙','白风','蓝夜','黄种子','红蛇','白世界桥','蓝手','黄星星','红月','白狗','蓝猴','黄人','红天行者','白巫师','蓝鹰','黄战士','红地球','白镜','蓝风暴','黄太阳'];
+    // SVG 占位图腾
+    var SEAL_GLYPHS = [
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#D32F2F20" stroke="#D32F2F" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#D32F2F">龙</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#ECEFF180" stroke="#90A4AE" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#666">风</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#1976D220" stroke="#1976D2" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#1976D2">夜</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#FBC02D20" stroke="#FBC02D" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#FBC02D">种</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#C6282820" stroke="#C62828" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#C62828">蛇</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#B0BEC520" stroke="#78909C" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#78909C">桥</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#1565C020" stroke="#1565C0" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#1565C0">手</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#F9A82520" stroke="#F9A825" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#F9A825">星</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#E5393520" stroke="#E53935" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#E53935">月</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#CFD8DC20" stroke="#90A4AE" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#666">狗</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#1E88E520" stroke="#1E88E5" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#1E88E5">猴</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#FDD83520" stroke="#FDD835" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#FBC02D">人</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#EF535020" stroke="#EF5350" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#EF5350">行</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#90A4AE20" stroke="#90A4AE" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#666">师</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#42A5F520" stroke="#42A5F5" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#42A5F5">鹰</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#FFEE5820" stroke="#FDD835" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#FDD835">战</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#FF704320" stroke="#FF7043" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#FF7043">球</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#BDBDBD20" stroke="#9E9E9E" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#9E9E9E">镜</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#29B6F620" stroke="#29B6F6" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#29B6F6">暴</text></svg>',
+        '<svg viewBox="0 0 60 60" width="60" height="60"><circle cx="30" cy="30" r="26" fill="#FFD60020" stroke="#FFD600" stroke-width="2"/><text x="30" y="36" text-anchor="middle" font-size="20" fill="#F9A825">日</text></svg>'
+    ];
 
-    function truncate(str, maxLen) {
-        if (!str || str.length <= maxLen) return str;
-        return str.substring(0, maxLen) + '...';
-    }
-
-    function renderFivePowers(kinNum) {
-        var container = document.getElementById('fivePowersSection');
-        var loading = document.getElementById('fivePowersLoading');
-
-        // 等待解读库加载
+    function renderKin(kinNum) {
         if (typeof MayaKin === 'undefined' || typeof KinInterpretations === 'undefined') {
-            loading.textContent = '正在加载解读数据...';
-            setTimeout(function() { renderFivePowers(kinNum); }, 300);
+            document.getElementById('fivePowersLoading').textContent = '正在加载计算引擎...';
+            setTimeout(function() { renderKin(kinNum); }, 300);
             return;
         }
 
         var info = MayaKin.getKinInfo(kinNum);
-        if (!info) {
-            loading.textContent = '无法加载此 Kin 的数据';
+        if (!info) { 
+            document.getElementById('fivePowersLoading').innerHTML = 'Kin ' + kinNum + ' 数据不可用（1-260范围内）';
             return;
         }
 
-        // 获取五大力量的位置描述
-        var pos = KinInterpretations.POSITIONS;
+        document.getElementById('kinTitle').textContent = 'Kin ' + kinNum + ' · ' + info.name;
+        document.getElementById('kinNumberDisplay').textContent = 'Kin ' + kinNum;
 
-        // 构建卡片数据
+        var t = KinInterpretations.getTone(info.tone.id);
+        var s = KinInterpretations.getSeal(info.seal.id);
+
+        if (!t || !s) {
+            document.getElementById('fivePowersLoading').textContent = '解读数据加载中...';
+            setTimeout(function() { renderKin(kinNum); }, 300);
+            return;
+        }
+
+        // 构建五大力量卡片
+        function kinInfo(k) { return MayaKin.getKinInfo(k); }
+        function sealInfo(k) { return KinInterpretations.getSeal(kinInfo(k).seal.id); }
+        function toneInfo(k) { return KinInterpretations.getTone(kinInfo(k).tone.id); }
+
         var cards = [
-            {
-                key: 'destiny',
-                kin: kinNum,
-                name: info.name,
-                seal: KinInterpretations.getSeal(info.seal.id),
-                tone: KinInterpretations.getTone(info.tone.id)
-            },
-            {
-                key: 'guide',
-                kin: info.relations.guide,
-                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.guide).seal.id),
-                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.guide).tone.id)
-            },
-            {
-                key: 'support',
-                kin: info.relations.support,
-                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.support).seal.id),
-                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.support).tone.id)
-            },
-            {
-                key: 'challenge',
-                kin: info.relations.challenge,
-                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.challenge).seal.id),
-                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.challenge).tone.id)
-            },
-            {
-                key: 'drive',
-                kin: info.relations.drive,
-                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.drive).seal.id),
-                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.drive).tone.id)
-            }
+            { key:'destiny', k:kinNum, icon:'🎯', label:'命运力量 · 核心本质', position:'中心', desc: s.talentDesc, archetype: s.archetype, color: s.colorHex, element: s.element, family: s.earthFamily, tone_action: t.action, tone_q: t.question, essence: s.essence },
+            { key:'guide', k:info.relations.guide, icon:'🌟', label:'引导 · 上方指引', position:'上方', desc: sealInfo(info.relations.guide).talentDesc, archetype: sealInfo(info.relations.guide).archetype, color: sealInfo(info.relations.guide).colorHex, element: sealInfo(info.relations.guide).element, family: sealInfo(info.relations.guide).earthFamily, tone_action: toneInfo(info.relations.guide).action, tone_q: toneInfo(info.relations.guide).question, essence: sealInfo(info.relations.guide).essence },
+            { key:'support', k:info.relations.support, icon:'💪', label:'支持 · 右方友好', position:'右方', desc: sealInfo(info.relations.support).talentDesc, archetype: sealInfo(info.relations.support).archetype, color: sealInfo(info.relations.support).colorHex, element: sealInfo(info.relations.support).element, family: sealInfo(info.relations.support).earthFamily, tone_action: toneInfo(info.relations.support).action, tone_q: toneInfo(info.relations.support).question, essence: sealInfo(info.relations.support).essence },
+            { key:'challenge', k:info.relations.challenge, icon:'⚡', label:'挑战 · 左方拓展', position:'左方', desc: sealInfo(info.relations.challenge).talentDesc, archetype: sealInfo(info.relations.challenge).archetype, color: sealInfo(info.relations.challenge).colorHex, element: sealInfo(info.relations.challenge).element, family: sealInfo(info.relations.challenge).earthFamily, tone_action: toneInfo(info.relations.challenge).action, tone_q: toneInfo(info.relations.challenge).question, essence: sealInfo(info.relations.challenge).essence },
+            { key:'drive', k:info.relations.drive, icon:'🚀', label:'推动 · 下方潜藏', position:'下方', desc: sealInfo(info.relations.drive).talentDesc, archetype: sealInfo(info.relations.drive).archetype, color: sealInfo(info.relations.drive).colorHex, element: sealInfo(info.relations.drive).element, family: sealInfo(info.relations.drive).earthFamily, tone_action: toneInfo(info.relations.drive).action, tone_q: toneInfo(info.relations.drive).question, essence: sealInfo(info.relations.drive).essence }
         ];
 
-        var html = '<h2>🌟 五大力量天赋解读</h2>';
-        html += '<p class="subtitle">每个Kin由1个图腾印记 + 1个调性组合，五大力量构成完整的你</p>';
+        var sealIdx = info.seal.id - 1;
+        var glyph = SEAL_GLYPHS[sealIdx] || '';
+        var colorInfo = KIN_COLORS[sealIdx] || '#667eea';
+
+        var html = '<div style="text-align:center;margin-bottom:2rem">';
+        html += '<div style="display:inline-block">' + glyph + '</div>';
+        html += '<h2 style="margin:0.5rem 0 0.2rem;font-size:1.8rem;color:' + colorInfo + '">Kin ' + kinNum + '</h2>';
+        html += '<div style="font-size:1.2rem;font-weight:600;color:#333">' + info.name + '</div>';
+        html += '<div style="display:flex;justify-content:center;gap:1rem;margin-top:0.5rem;flex-wrap:wrap;font-size:0.85rem;color:#888">';
+        html += '<span>🎨 ' + s.archetype + '</span>';
+        html += '<span>🌀 ' + t.action + '</span>';
+        html += '<span>❓ ' + t.question + '</span>';
+        html += '<span>🌊 ' + info.wave + ' · 第' + info.wavePos + '格</span>';
+        html += '</div></div>';
+
+        html += '<div style="margin:1.5rem 0;padding:1rem 1.5rem;background:#f8f9ff;border-radius:12px;border-left:4px solid ' + colorInfo + '">';
+        html += '<div style="font-weight:600;margin-bottom:0.3rem">💡 ' + s.essence + '</div>';
+        html += '<div style="color:#555;font-size:0.92rem;line-height:1.7">' + s.talentDesc + '</div>';
+        html += '<div class="power-traits" style="margin-top:0.5rem"><span class="power-trait">' + s.element + ' · ' + s.earthFamily + '</span><span class="power-trait">✨ 原型：' + s.archetype + '</span><span class="power-trait">🎯 关键词：' + s.keywords.join(' · ') + '</span></div>';
+        html += '</div>';
+
+        // 五大力量
+        html += '<h3 style="text-align:center;margin:2rem 0 1rem;font-size:1.3rem;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">🌟 五大力量</h3>';
         html += '<div class="five-powers-grid">';
 
-        cards.forEach(function(card) {
-            var p = pos[card.key];
-            if (!p || !card.seal || !card.tone) return;
-
-            var isSelfGuide = (card.key === 'guide' && card.kin === kinNum);
-            var selfNote = isSelfGuide ? '<br><em style="font-size:0.82rem;color:#f59e0b;">✦ 自引导：你的内在就是最高导航</em>' : '';
-
-            html += '<div class="power-card ' + card.key + '">';
+        cards.forEach(function(c) {
+            var kInfo = kinInfo(c.k);
+            var isSelf = (c.k === kinNum);
+            // 限制描述长度
+            var shortDesc = c.desc.length > 160 ? c.desc.substring(0, 157) + '...' : c.desc;
+            var sealIdx2 = MayaKin.getKinInfo(c.k).seal.id - 1;
+            var glyph2 = SEAL_GLYPHS[sealIdx2] || '';
+            
+            html += '<div class="power-card ' + c.key + '">';
             html += '  <div class="power-header">';
-            html += '    <span class="power-icon">' + p.icon + '</span>';
-            html += '    <div>';
-            html += '      <div class="power-title">' + p.name + '</div>';
-            html += '      <div class="power-subtitle">' + p.symbol + ' · ' + p.question + '</div>';
-            html += '    </div>';
+            html += '    <span class="power-icon">' + c.icon + '</span>';
+            html += '    <div><div class="power-title">' + c.label + '</div><div class="power-subtitle">' + c.position + ' · ' + c.tone_q + '</div></div>';
             html += '  </div>';
-
-            html += '  <div class="power-kin">';
-            html += '    Kin ' + card.kin + ' · ' + card.tone.name + card.seal.name;
-            html += '    <span class="seal-dot" style="background:' + card.seal.colorHex + '"></span>';
-            html += '  </div>';
-
-            html += '  <div class="power-desc">' + card.seal.talentDesc.substring(0, 200) + (card.seal.talentDesc.length > 200 ? '...' : '') + '</div>';
-
-            // 标记
-            html += '  <div class="power-traits">';
-            html += '    <span class="power-trait">🎨 ' + card.seal.archetype + '</span>';
-            html += '    <span class="power-trait">🌀 ' + card.tone.action + '</span>';
-            html += '    <span class="power-trait">' + card.seal.element + ' · ' + card.seal.earthFamily + '</span>';
-            html += '  </div>';
-
-            html += '  <div class="power-question">💡 ' + card.seal.essence + selfNote + '</div>';
-
+            html += '  <div style="display:flex;align-items:center;gap:10px;margin:6px 0">' + glyph2 + '<div><div class="power-kin">Kin ' + c.k + ' · ' + kInfo.name + ' <span class="seal-dot" style="background:' + c.color + '"></span></div><div style="font-size:0.82rem;color:#888">' + c.archetype + '</div></div></div>';
+            html += '  <div class="power-desc">' + shortDesc + '</div>';
+            html += '  <div class="power-traits"><span class="power-trait">🎨 ' + c.archetype + '</span><span class="power-trait">🌀 ' + c.tone_action + '</span><span class="power-trait">' + c.element + ' · ' + c.family + '</span></div>';
+            if (isSelf) {
+                html += '  <div style="font-size:0.82rem;color:#f59e0b;margin-top:0.4rem;font-style:italic">✦ 自引导：你的内在就是最高导航</div>';
+            }
+            html += '  <div class="power-question">💡 ' + c.essence + '</div>';
             html += '</div>';
         });
 
-        // 五大力量关系图说明
-        html += '</div>'; // close grid
-        html += '<div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(102,126,234,0.15)">';
-        html += '  <div style="display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;font-size:0.82rem;color:#888">';
-        html += '    <span>🌟 上方指引</span>';
-        html += '    <span>🎯 中心命运</span>';
-        html += '    <span>⚡ 左方挑战</span>';
-        html += '    <span>💪 右方支持</span>';
-        html += '    <span>🚀 下方推动</span>';
-        html += '  </div>';
         html += '</div>';
 
-        container.innerHTML = html;
+        // 方向说明
+        html += '<div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(102,126,234,0.15);font-size:0.82rem;color:#888">';
+        html += '<div style="display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap">';
+        html += '<span>🌟 上方指引</span><span>🎯 中心命运</span><span>⚡ 左方挑战</span><span>💪 右方支持</span><span>🚀 下方推动</span>';
+        html += '</div></div>';
+
+        document.getElementById('kinContent').innerHTML = html;
+
+        // 更新URL
+        var newUrl = window.location.pathname.replace(/\/[^\/]*$/, '/' + 'kin-' + kinNum + '/');
+        if (window.location.pathname.indexOf('kin-' + kinNum) === -1) {
+            history.pushState({kin: kinNum}, '', newUrl);
+        }
     }
 
-    var kinNum = getKinNumber();
-    if (kinNum) {
-        renderFivePowers(kinNum);
+    // 从URL获取Kin编号
+    function getKinFromURL() {
+        var m = window.location.pathname.match(/kin-(\d+)/i);
+        return m ? parseInt(m[1]) : null;
     }
+
+    // 查询按钮
+    function setupSearch() {
+        var btn = document.getElementById('kinGoBtn');
+        var input = document.getElementById('kinInput');
+        if (!btn || !input) return;
+        
+        btn.addEventListener('click', function() {
+            var v = parseInt(input.value);
+            if (v >= 1 && v <= 260) renderKin(v);
+            else alert('请输入 1-260 之间的Kin编号');
+        });
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') btn.click();
+        });
+    }
+
+    var kinFromURL = getKinFromURL();
+    if (kinFromURL) {
+        renderKin(kinFromURL);
+    }
+    setupSearch();
 })();
 </script>
 {{ end }}
