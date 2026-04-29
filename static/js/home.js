@@ -89,7 +89,7 @@
                     '<div class="result-det">' + dets + '</div>' +
                     '<div class="result-actions">' +
                     '<a href="/kin-guide/kins/kin-' + k + '/" class="pa">查看完整解读 →</a>' +
-                    '<a href="/learn/" class="sa">📖 走进玛雅</a>' +
+                    '<a href="/kin-guide/learn/" class="sa">📖 走进玛雅</a>' +
                     '</div></div>';
                 area.style.display = 'block';
                 area.scrollIntoView({behavior:'smooth',block:'center'});
