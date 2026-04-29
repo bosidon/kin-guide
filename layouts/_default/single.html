@@ -6,12 +6,6 @@
             <span class="kin-number" id="kinNumberDisplay">{{ if .Params.kin_number }}Kin {{ .Params.kin_number }}{{ else }}—{{ end }}</span>
             <span class="kin-name">{{ .Params.kin_name }}</span>
         </div>
-        <div class="kin-search-bar" style="margin-top:1.2rem">
-            <input type="number" id="kinInput" min="1" max="260" placeholder="输入Kin编号 (1-260)..." style="padding:8px 16px;font-size:1rem;border:2px solid #e0e7ff;border-radius:8px;width:200px;outline:none;">
-            <button id="kinGoBtn" style="padding:8px 20px;font-size:1rem;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:8px;cursor:pointer;margin-left:8px;">查询</button>
-            <span style="margin-left:12px;color:#999;font-size:0.85rem">或</span>
-            <a href="{{ .Site.BaseURL }}" style="margin-left:8px;color:#667eea;font-size:0.9rem">首页输入生日查询 →</a>
-        </div>
     </header>
 
     <div id="kinContent">
@@ -20,5 +14,4 @@
 </article>
 
 <script src="{{ "js/maya_calculator.js" | relURL }}"></script>
-<script src="{{ "js/kin-interpretations.js" | relURL }}"></script>
 {{ end }}

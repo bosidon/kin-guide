@@ -11,11 +11,11 @@ description: "如何计算你的Kin、每日践行指南、流日流年概念、
 .article-body h2 { margin-top: 2.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #667eea20; color: #667eea; }
 .article-body h3 { margin-top: 1.8rem; color: #555; }
 .article-body .highlight { background: linear-gradient(135deg,#667eea08,#764ba208); border-left: 4px solid #667eea; padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
-.article-body .tip { background: #fefce8; border-left: 4px solid #f59e0b; padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+.article-body .tip { background: rgba(245,158,11,0.06); border-left: 4px solid #f59e0b; padding: 1rem 1.5rem; border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
 .article-body table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.95rem; }
 .article-body td, .article-body th { padding:10px 14px; border:1px solid #e0e7ff; }
 .article-body th { background:#667eea; color:#fff; font-weight:600; }
-.article-body tr:nth-child(even) { background:#f8f9ff; }
+.article-body tr:nth-child(even) { background:rgba(255,255,255,0.04); }
 </style>
 
 <div class="article-body">

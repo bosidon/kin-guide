@@ -2,40 +2,45 @@
 <html lang="{{ .Site.LanguageCode | default "zh-cn" }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
     <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
     <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+    <style>
+        body { background: #0a0a1a; color: #e8e8e8; -webkit-font-smoothing: antialiased; }
+        header { background: rgba(10,10,26,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.04); }
+        header a, nav .nav-links a { color: rgba(255,255,255,0.6) !important; }
+        .logo a { color: #a78bfa !important; }
+        footer { color: rgba(255,255,255,0.2) !important; border-color: rgba(255,255,255,0.03) !important; }
+        footer p { color: rgba(255,255,255,0.2) !important; }
+        .kin-content p, .article-body p, .kin-content li, .article-body li { color: #c8c8c8 !important; }
+        .kin-content strong, .article-body strong { color: #f0f0f0 !important; }
+        .kin-content h2, .kin-content h3, .article-body h3, .article-body h4 { color: #d8d8d8 !important; }
+        .article-body, .kin-content { color: #e8e8e8; background: transparent !important; }
+        .article-body .highlight, .article-body .tip, .article-body div { background: transparent !important; }
+        .article-body table, .kin-content table { background: transparent !important; }
+        .article-body td, .kin-content td { background: rgba(255,255,255,0.03) !important; border-color: rgba(255,255,255,0.08) !important; color: #c8c8c8 !important; }
+        .article-body th, .kin-content th { background: #3d3d6b !important; color: #f0f0f0 !important; border-color: rgba(255,255,255,0.08) !important; }
+        .article-body tr:nth-child(even) td, .kin-content tr:nth-child(even) td { background: rgba(255,255,255,0.06) !important; }
+    </style>
     {{ block "head" . }}{{ end }}
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+                <a href="{{ .Site.BaseURL }}">✦ {{ .Site.Title }}</a>
             </div>
             <ul class="nav-links">
                 <li><a href="{{ .Site.BaseURL }}">首页</a></li>
-                <li><a href="{{ "kins" | relURL }}">所有 Kin</a></li>
-                <li><a href="{{ "learn/" | relURL }}">📖 知识库</a></li>
-                <li><a href="{{ "categories" | relURL }}">分类</a></li>
-                <li><a href="{{ "tags" | relURL }}">标签</a></li>
+                <li><a href="{{ "learn/" | relURL }}">📖 走进玛雅</a></li>
             </ul>
-            <div class="search-box">
-                <input type="text" placeholder="搜索 Kin..." id="searchInput">
-            </div>
         </nav>
     </header>
-
-    <main>
-        {{ block "main" . }}{{ end }}
-    </main>
-
+    <main>{{ block "main" . }}{{ end }}</main>
     <footer>
-        <p>&copy; {{ now.Format "2006" }} {{ .Site.Title }}. 基于传统玛雅历法智慧。</p>
-        <p>仅供学习和灵性成长参考。</p>
+        <p>&copy; {{ now.Format "2006" }} 玛雅天赋解读 · <a href="{{ .Site.BaseURL }}">首页</a> · <a href="{{ "learn/" | relURL }}">走进玛雅</a></p>
     </footer>
-
     {{ block "scripts" . }}{{ end }}
 </body>
 </html>

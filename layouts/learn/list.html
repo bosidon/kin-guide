@@ -1,22 +1,20 @@
 {{ define "main" }}
-
 <style>
 .learn-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
-.learn-page h1 { text-align: center; margin-bottom: 0.5rem; color: #667eea; }
-.learn-page .subtitle { text-align: center; color: #888; margin-bottom: 2rem; }
-.learn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.learn-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 4px solid #667eea; text-decoration: none; color: #333; display: block; transition: transform 0.2s; }
-.learn-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
-.learn-card h3 { margin: 0 0 0.3rem; }
-.learn-card p { margin: 0; color: #666; font-size: 0.92rem; }
-.learn-card .meta { font-size: 0.8rem; color: #999; margin-top: 0.5rem; }
+.learn-page h1 { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.3rem; background: linear-gradient(135deg,#667eea,#a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.learn-page .sub { text-align: center; color: rgba(255,255,255,0.45); font-size: 0.9rem; margin-bottom: 2rem; }
+.learn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.learn-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: all 0.2s; border-left: 4px solid #667eea; }
+.learn-card:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+.learn-card h3 { margin: 0 0 0.3rem; font-size: 1.05rem; color: #f0f0f0; }
+.learn-card p { margin: 0; color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.5; }
+.learn-card .meta { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 0.5rem; }
 @media (max-width: 600px) { .learn-grid { grid-template-columns: 1fr; } }
 </style>
 
 <div class="learn-page">
-  <h1>📖 13月亮历知识库</h1>
-  <p class="subtitle">从零开始，系统学习玛雅13月亮历的完整知识体系</p>
-  
+  <h1>📖 走进玛雅</h1>
+  <p class="sub">从零开始，系统学习玛雅13月亮历的完整知识体系</p>
   <div class="learn-grid">
     {{ range .Pages.ByWeight }}
     <a href="{{ .RelPermalink }}" class="learn-card" 
@@ -28,5 +26,4 @@
     {{ end }}
   </div>
 </div>
-
 {{ end }}
