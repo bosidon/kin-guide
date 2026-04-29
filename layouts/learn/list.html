@@ -1,0 +1,32 @@
+{{ define "main" }}
+
+<style>
+.learn-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
+.learn-page h1 { text-align: center; margin-bottom: 0.5rem; color: #667eea; }
+.learn-page .subtitle { text-align: center; color: #888; margin-bottom: 2rem; }
+.learn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.learn-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 4px solid #667eea; text-decoration: none; color: #333; display: block; transition: transform 0.2s; }
+.learn-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.learn-card h3 { margin: 0 0 0.3rem; }
+.learn-card p { margin: 0; color: #666; font-size: 0.92rem; }
+.learn-card .meta { font-size: 0.8rem; color: #999; margin-top: 0.5rem; }
+@media (max-width: 600px) { .learn-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="learn-page">
+  <h1>📖 13月亮历知识库</h1>
+  <p class="subtitle">从零开始，系统学习玛雅13月亮历的完整知识体系</p>
+  
+  <div class="learn-grid">
+    {{ range .Pages.ByWeight }}
+    <a href="{{ .RelPermalink }}" class="learn-card" 
+       style="border-left-color: {{ if eq .Weight 1 }}#667eea{{ else if eq .Weight 2 }}#764ba2{{ else if eq .Weight 3 }}#f59e0b{{ else }}#10b981{{ end }}">
+      <h3>{{ .Title }}</h3>
+      <p>{{ .Description }}</p>
+      <div class="meta">{{ .WordCount }} 字</div>
+    </a>
+    {{ end }}
+  </div>
+</div>
+
+{{ end }}
