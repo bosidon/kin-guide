@@ -15,6 +15,11 @@
     </header>
 
     <div class="kin-content">
+        <!-- 动态五大力量解读区域 -->
+        <div id="fivePowersSection" class="five-powers-section">
+            <div class="five-powers-loading" id="fivePowersLoading">加载五大力量解读中...</div>
+        </div>
+
         {{ .Content }}
     </div>
 
@@ -29,4 +34,137 @@
         </div>
     </footer>
 </article>
+
+<script src="{{ "js/maya_calculator.js" | relURL }}"></script>
+<script src="{{ "js/kin-interpretations.js" | relURL }}"></script>
+<script>
+(function() {
+    // 从页面提取当前 Kin 编号
+    function getKinNumber() {
+        var meta = document.querySelector('.kin-number');
+        if (!meta) return null;
+        var m = meta.textContent.match(/Kin\s*(\d+)/i);
+        return m ? parseInt(m[1]) : null;
+    }
+
+    function truncate(str, maxLen) {
+        if (!str || str.length <= maxLen) return str;
+        return str.substring(0, maxLen) + '...';
+    }
+
+    function renderFivePowers(kinNum) {
+        var container = document.getElementById('fivePowersSection');
+        var loading = document.getElementById('fivePowersLoading');
+
+        // 等待解读库加载
+        if (typeof MayaKin === 'undefined' || typeof KinInterpretations === 'undefined') {
+            loading.textContent = '正在加载解读数据...';
+            setTimeout(function() { renderFivePowers(kinNum); }, 300);
+            return;
+        }
+
+        var info = MayaKin.getKinInfo(kinNum);
+        if (!info) {
+            loading.textContent = '无法加载此 Kin 的数据';
+            return;
+        }
+
+        // 获取五大力量的位置描述
+        var pos = KinInterpretations.POSITIONS;
+
+        // 构建卡片数据
+        var cards = [
+            {
+                key: 'destiny',
+                kin: kinNum,
+                name: info.name,
+                seal: KinInterpretations.getSeal(info.seal.id),
+                tone: KinInterpretations.getTone(info.tone.id)
+            },
+            {
+                key: 'guide',
+                kin: info.relations.guide,
+                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.guide).seal.id),
+                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.guide).tone.id)
+            },
+            {
+                key: 'support',
+                kin: info.relations.support,
+                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.support).seal.id),
+                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.support).tone.id)
+            },
+            {
+                key: 'challenge',
+                kin: info.relations.challenge,
+                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.challenge).seal.id),
+                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.challenge).tone.id)
+            },
+            {
+                key: 'drive',
+                kin: info.relations.drive,
+                seal: KinInterpretations.getSeal(MayaKin.getKinInfo(info.relations.drive).seal.id),
+                tone: KinInterpretations.getTone(MayaKin.getKinInfo(info.relations.drive).tone.id)
+            }
+        ];
+
+        var html = '<h2>🌟 五大力量天赋解读</h2>';
+        html += '<p class="subtitle">每个Kin由1个图腾印记 + 1个调性组合，五大力量构成完整的你</p>';
+        html += '<div class="five-powers-grid">';
+
+        cards.forEach(function(card) {
+            var p = pos[card.key];
+            if (!p || !card.seal || !card.tone) return;
+
+            var isSelfGuide = (card.key === 'guide' && card.kin === kinNum);
+            var selfNote = isSelfGuide ? '<br><em style="font-size:0.82rem;color:#f59e0b;">✦ 自引导：你的内在就是最高导航</em>' : '';
+
+            html += '<div class="power-card ' + card.key + '">';
+            html += '  <div class="power-header">';
+            html += '    <span class="power-icon">' + p.icon + '</span>';
+            html += '    <div>';
+            html += '      <div class="power-title">' + p.name + '</div>';
+            html += '      <div class="power-subtitle">' + p.symbol + ' · ' + p.question + '</div>';
+            html += '    </div>';
+            html += '  </div>';
+
+            html += '  <div class="power-kin">';
+            html += '    Kin ' + card.kin + ' · ' + card.tone.name + card.seal.name;
+            html += '    <span class="seal-dot" style="background:' + card.seal.colorHex + '"></span>';
+            html += '  </div>';
+
+            html += '  <div class="power-desc">' + card.seal.talentDesc.substring(0, 200) + (card.seal.talentDesc.length > 200 ? '...' : '') + '</div>';
+
+            // 标记
+            html += '  <div class="power-traits">';
+            html += '    <span class="power-trait">🎨 ' + card.seal.archetype + '</span>';
+            html += '    <span class="power-trait">🌀 ' + card.tone.action + '</span>';
+            html += '    <span class="power-trait">' + card.seal.element + ' · ' + card.seal.earthFamily + '</span>';
+            html += '  </div>';
+
+            html += '  <div class="power-question">💡 ' + card.seal.essence + selfNote + '</div>';
+
+            html += '</div>';
+        });
+
+        // 五大力量关系图说明
+        html += '</div>'; // close grid
+        html += '<div style="text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(102,126,234,0.15)">';
+        html += '  <div style="display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;font-size:0.82rem;color:#888">';
+        html += '    <span>🌟 上方指引</span>';
+        html += '    <span>🎯 中心命运</span>';
+        html += '    <span>⚡ 左方挑战</span>';
+        html += '    <span>💪 右方支持</span>';
+        html += '    <span>🚀 下方推动</span>';
+        html += '  </div>';
+        html += '</div>';
+
+        container.innerHTML = html;
+    }
+
+    var kinNum = getKinNumber();
+    if (kinNum) {
+        renderFivePowers(kinNum);
+    }
+})();
+</script>
 {{ end }}

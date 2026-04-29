@@ -334,6 +334,162 @@ footer {
     border-top: 1px solid var(--border-color);
 }
 
+/* ===================================
+   五大力量解读区（动态生成）
+   =================================== */
+
+.five-powers-section {
+  margin: 2rem -1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea0a 0%, #764ba20a 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(102,126,234,0.15);
+}
+
+.five-powers-section h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.five-powers-section .subtitle {
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.five-powers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.power-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--primary-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.power-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.power-card .power-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.power-card .power-icon {
+  font-size: 1.3rem;
+  width: 2rem;
+  text-align: center;
+}
+
+.power-card .power-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-color);
+}
+
+.power-card .power-subtitle {
+  font-size: 0.82rem;
+  color: #999;
+}
+
+.power-card .power-kin {
+  font-size: 0.9rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0.3rem 0 0.5rem;
+}
+
+.power-card .power-desc {
+  font-size: 0.92rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+.power-card .power-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.power-card .power-trait {
+  font-size: 0.78rem;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background: #f0f4ff;
+  color: #667eea;
+}
+
+.power-card .power-trait.shadow {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.power-card .power-question {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #eee;
+}
+
+.power-card.destiny { border-left-color: #667eea; }
+.power-card.guide { border-left-color: #f59e0b; }
+.power-card.support { border-left-color: #10b981; }
+.power-card.challenge { border-left-color: #ef4444; }
+.power-card.drive { border-left-color: #8b5cf6; }
+
+/* 加载状态 */
+.five-powers-loading {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+}
+
+.five-powers-loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border: 2px solid #ddd;
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 颜色圆点 */
+.seal-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     nav {

@@ -144,6 +144,63 @@
                 font-size: 2rem;
             }
         }
+    
+        /* 生日计算器 */
+        .kin-calculator {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .kin-calculator h2 { font-size: 1.5rem; color: #667eea; margin-bottom: 0.5rem; }
+        .kin-calculator p { color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .calc-form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .calc-input {
+            padding: 12px 20px; font-size: 1rem; border: 2px solid #e0e7ff;
+            border-radius: 10px; outline: none; transition: border-color 0.3s;
+            max-width: 220px; flex: 1; min-width: 180px;
+        }
+        .calc-input:focus { border-color: #667eea; }
+        .calc-btn {
+            padding: 12px 28px; font-size: 1rem; font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .calc-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+        .calc-result {
+            margin-top: 1.5rem; padding: 1.5rem; background: #f8f9ff;
+            border-radius: 12px; border: 1px solid #e0e7ff;
+        }
+        .result-badge {
+            display: inline-flex; flex-direction: column; align-items: center;
+            padding: 1rem 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%; width: 140px; height: 140px; justify-content: center;
+            color: white; margin-bottom: 1rem;
+        }
+        .result-kin-number { font-size: 1.8rem; font-weight: 800; }
+        .result-kin-name { font-size: 1rem; opacity: 0.95; }
+        .result-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 1rem 0; }
+        .detail-item { padding: 8px 12px; background: white; border-radius: 8px; border: 1px solid #e0e7ff; }
+        .detail-label { font-size: 0.75rem; color: #999; text-transform: uppercase; }
+        .detail-value { font-size: 1rem; font-weight: 600; color: #333; margin-top: 2px; }
+        .result-link {
+            display: inline-block; margin-top: 0.5rem; padding: 8px 24px;
+            background: #667eea; color: white; text-decoration: none;
+            border-radius: 8px; font-size: 0.9rem; transition: background 0.3s;
+        }
+        .result-link:hover { background: #5a6fd6; }
+        .color-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+        @media (max-width: 600px) {
+            .calc-form { flex-direction: column; align-items: center; }
+            .calc-input { max-width: 100%; width: 100%; }
+            .calc-btn { width: 100%; }
+            .result-details { grid-template-columns: 1fr; }
+            .result-badge { width: 120px; height: 120px; }
+            .result-kin-number { font-size: 1.5rem; }
+        }
+
     </style>
 </head>
 <body>
@@ -175,9 +232,27 @@
                 <a href="#kin-241-260" class="category-tag">Kin 241-260</a>
             </div>
         </div>
-        
+
+        <!-- 生日计算器 -->
+        <div class="kin-calculator" id="kinCalculator">
+            <h2>🔮 查询你的玛雅天赋 Kin</h2>
+            <p>输入你的出生日期，一键计算你的星系印记、调性和波符</p>
+            <div class="calc-form">
+                <input type="date" id="birthDate" class="calc-input" max="2099-12-31">
+                <button id="calcKinBtn" class="calc-btn">查询我的 Kin</button>
+            </div>
+            <div id="calcResult" class="calc-result" style="display:none;">
+                <div class="result-badge" id="resultBadge">
+                    <div class="result-kin-number" id="resultKinNumber"></div>
+                    <div class="result-kin-name" id="resultKinName"></div>
+                </div>
+                <div class="result-details" id="resultDetails"></div>
+                <a id="resultLink" class="result-link" target="_blank">查看完整解读 →</a>
+            </div>
+        </div>
+
         <div class="kin-grid" id="kinGrid">
-            <!-- Kin 卡片将通过 JavaScript 动态生成 -->
+            <!-- Kin 卡片将通过 JavaScript 动态生成（包含真实名称） -->
         </div>
         
         <div class="footer">
@@ -191,23 +266,16 @@
         const searchInput = document.getElementById('searchInput');
         const kinGrid = document.getElementById('kinGrid');
         
-        // 生成 Kin 卡片
+        // 生成 Kin 卡片（使用计算引擎获取真实名称）
         function generateKinCards() {
             let html = '';
             for (let i = 1; i <= 260; i++) {
-                // 这里可以添加从数据中获取的实际 Kin 名称
-                // 暂时使用占位符
-                const kinNames = [
-                    "磁性红龙", "月亮白风", "电力蓝夜", "自我存在黄种子", "超频红蛇",
-                    "韵律白世界桥", "共振蓝手", "银河黄星星", "太阳红月", "行星白狗"
-                ];
-                const nameIndex = (i - 1) % 10;
-                
+                var name = window.MayaKin.kinName(i);
                 html += `
                     <a href="kins/kin-${i}" class="kin-card">
                         <div class="kin-number">Kin ${i}</div>
-                        <div class="kin-name">${kinNames[nameIndex]}</div>
-                        <div class="kin-energy">探索能量解读</div>
+                        <div class="kin-name">${name}</div>
+                        <div class="kin-energy">查看完整解读 →</div>
                     </a>
                 `;
             }
@@ -229,8 +297,84 @@
             });
         });
         
-        // 初始化
-        generateKinCards();
     </script>
+
+    <script src="/kin-guide/js/maya_calculator.js"></script>
+    <script src="/kin-guide/js/kin-interpretations.js"></script>
+    <script>
+        // 卡片真实名称（需在计算器引擎加载后执行）
+        generateKinCards();
+        
+        // 生日计算器逻辑（含五大力量解读）
+        document.addEventListener('DOMContentLoaded', function() {
+            const calcBtn = document.getElementById('calcKinBtn');
+            const birthInput = document.getElementById('birthDate');
+            const resultDiv = document.getElementById('calcResult');
+            
+            // 设置默认日期为今天
+            var today = new Date();
+            birthInput.value = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+            
+            calcBtn.addEventListener('click', function() {
+                var dateStr = birthInput.value;
+                if (!dateStr) { alert('请选择出生日期'); return; }
+                
+                try {
+                    if (typeof MayaKin === 'undefined') {
+                        alert('解读引擎加载中，请稍后再试');
+                        return;
+                    }
+                    var kin = MayaKin.calculateKin(dateStr);
+                    var info = MayaKin.getKinInfo(kin);
+                    
+                    document.getElementById('resultKinNumber').textContent = 'Kin ' + kin;
+                    document.getElementById('resultKinName').textContent = info.name;
+                    
+                    var link = document.getElementById('resultLink');
+                    link.href = '/kin-guide/kins/kin-' + kin + '/';
+                    
+                    // 获取解读数据
+                    var toneInt = KinInterpretations.getTone(info.tone.id);
+                    var sealInt = KinInterpretations.getSeal(info.seal.id);
+                    
+                    // 详情（含深入解读入口）
+                    var details = document.getElementById('resultDetails');
+                    details.innerHTML = 
+                        '<div class="detail-item"><div class="detail-label">调性</div><div class="detail-value">' + info.tone.name + '</div><div style="font-size:0.8rem;color:#888">' + toneInt.question + '</div></div>' +
+                        '<div class="detail-item"><div class="detail-label">图腾·印记</div><div class="detail-value">' + info.seal.name + '</div><div style="font-size:0.8rem;color:#888">' + sealInt.archetype + '</div></div>' +
+                        '<div class="detail-item"><div class="detail-label">波符</div><div class="detail-value">' + info.wave + '</div><div style="font-size:0.8rem;color:#888">第' + info.wavePos + '格</div></div>' +
+                        '<div class="detail-item"><div class="detail-label">家族·元素</div><div class="detail-value">' + sealInt.earthFamily + ' · ' + sealInt.element + '</div></div>';
+                    
+                    // 五大力量概要
+                    details.innerHTML += '<div style="grid-column:1/-1;margin-top:0.5rem;padding:0.5rem 0;border-top:1px solid #e0e7ff"><strong style="font-size:0.85rem;color:#667eea;">🌟 五大力量</strong></div>';
+                    
+                    var powerMap = [
+                        {key:'guide', icon:'🌟', label:'指引', kin: info.relations.guide},
+                        {key:'support', icon:'💪', label:'支持', kin: info.relations.support},
+                        {key:'challenge', icon:'⚡', label:'挑战', kin: info.relations.challenge},
+                        {key:'drive', icon:'🚀', label:'推动', kin: info.relations.drive}
+                    ];
+                    powerMap.forEach(function(p) {
+                        var pInfo = MayaKin.getKinInfo(p.kin);
+                        var pSeal = KinInterpretations.getSeal(pInfo.seal.id);
+                        details.innerHTML += '<div class="detail-item"><div class="detail-label">' + p.icon + ' ' + p.label + '</div><div class="detail-value">' + pInfo.name + '</div><div style="font-size:0.8rem;color:#888">' + pSeal.archetype + '</div></div>';
+                    });
+                    
+                    resultDiv.style.display = 'block';
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } catch(e) {
+                    alert('计算失败: ' + e.message);
+                }
+            });
+            
+            // 回车触发计算
+            birthInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calcBtn.click();
+            });
+        });
+    </script>
+
 </body>
 </html>
